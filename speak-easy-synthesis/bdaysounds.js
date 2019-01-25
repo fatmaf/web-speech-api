@@ -11,7 +11,7 @@ var rateValue = document.querySelector('.rate-value');
 var Hvar = document.querySelector('#H');
 */
 var voices = [];
-
+var strcount = -1;
 function populateVoiceList() {
   voices = synth.getVoices().sort(function (a, b) {
       const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
@@ -77,9 +77,9 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
     document.getElementById("bdaytext").appendChild(node);​
     }*/
 
-
-function speak_text(inputtext){
-    if (synth.speaking) {
+function just_speak(inputtext)
+{
+       if (synth.speaking) {
         console.error('speechSynthesis.speaking');
         return;
     }
@@ -103,14 +103,37 @@ function speak_text(inputtext){
 	utterThis.rate = 1;//rate.value;
 	synth.speak(utterThis);
 	console.log('Saying '+inputtext);
-  }
+
+    }
 }
-function anotherFunction(a){
-	var node = document.createElement("span");
+
+    function speak_text(inputtext,elemid){
+	just_speak(inputtext);
+ 	document.getElementById(elemid).setAttribute("style","color:red");
+	
+  
+}
+
+function speak_text_last(inputtext,elemid,alltext){
+    just_speak(inputtext);
+    document.getElementById(elemid).setAttribute("style","color:red");
+    while(synth.speaking);
+    just_speak(alltext);
+	
+  
+}
+function anotherFunction(a,idnum,islast,text){
+    var node = document.createElement("span");
+    var id = "text"+a+idnum;
+    node.setAttribute("id",id);
     var textnode = document.createTextNode(a);
     if(a!=' '){
-    node.addEventListener('click', function(){
-	speak_text(a);
+	node.addEventListener('click', function(){
+	    if(islast){
+		speak_text_last(a,id,text);
+	    }
+	    else
+	speak_text(a,id);
     });}
     
     node.appendChild(textnode); 
@@ -125,18 +148,42 @@ var node = document.createElement("H2");
     node.appendChild(textnode); 
     document.body.append(node);
 }
+function display_text(text){
+    strcount++;
+    for(var i=0; i<text.length; i++){
+	var isLast = (i==(text.length-1));
 
-var text_to_display='H A P P Y '; 
-var text_to_display2='B I R T H D A Y';
-for(var i=0; i<text_to_display.length; i++){
-    //if (text_to_display[i] != ' '){
-	//create_char_element(text_to_display[i]);
-    anotherFunction(text_to_display[i]);
+	anotherFunction(text[i]+" ",strcount+""+i,isLast,text);
     
     //}
+    }
+    var node = document.createElement("BR");
+    document.getElementById("bdaytext").appendChild(node);
+
+}
+function display_text_say(text,say){
+    strcount++;
+    for(var i=0; i<text.length; i++){
+	var isLast = (i==(text.length-1));
+
+	anotherFunction(text[i]+" ",strcount+""+i,isLast,say);
+    
+    //}
+    }
+    var node = document.createElement("BR");
+    document.getElementById("bdaytext").appendChild(node);
+
 }
 
-
+var text_to_say = 'birth day';
+var text_to_display='HAPPY'; 
+var text_to_display2='BIRTHDAY';
+var text_to_display3= 'ZOEYA';
+display_text(text_to_display);
+display_text_say(text_to_display2,text_to_say);
+display_text_say(text_to_display3,"zo ya");
+display_text('LOVE,');
+display_text_say('PHUPPO',"pooh po");
 //speak_text('Hi');
 /*inputForm.onsubmit = function(event) {
   event.preventDefault();
